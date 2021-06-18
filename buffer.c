@@ -178,7 +178,7 @@ size_t buffer_read(buffer_handle_t handle, uint8_t *dst, size_t dst_len)
     while (read_len < dst_len && buffer->offset < buffer->length)
     {
         size_t atom_read_len = MIN(dst_len - read_len, node->data_len - buffer->in_node_offset);
-        memcpy(dst + read_len, node->data, atom_read_len);
+        memcpy(dst + read_len, node->data + buffer->in_node_offset, atom_read_len);
         read_len += atom_read_len;
         // update offset
         buffer->offset += atom_read_len;
@@ -204,7 +204,7 @@ int buffer_write(buffer_handle_t handle, uint8_t *src, size_t src_len)
         return BUFFER_ERROR;
     }
     buffer_t *buffer = (buffer_t *)handle;
-    if (buffer->offset + src_len < buffer->length)
+    if (buffer->offset + src_len > buffer->length)
     {
         return BUFFER_ERROR_SIZE;
     }
