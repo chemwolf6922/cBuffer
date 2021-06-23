@@ -12,11 +12,13 @@ int main(int argc, char** argv)
     buffer_append(buffer,test_string_A,strlen(test_string_A));
     buffer_append(buffer,test_string_B,strlen(test_string_B));
     buffer_append(buffer,test_string_A,strlen(test_string_A));
+    buffer_unshift(buffer,test_string_A,strlen(test_string_A));
     buffer_append(buffer,test_string_B,strlen(test_string_B));
     buffer_append(buffer,test_string_A,strlen(test_string_A));
     buffer_append(buffer,test_string_B,strlen(test_string_B));
     buffer_append(buffer,test_string_A,strlen(test_string_A));
     buffer_append(buffer,test_string_B,strlen(test_string_B));
+    buffer_unshift(buffer,test_string_A,strlen(test_string_A));
     size_t prev_len = buffer_length(buffer);
     printf("buffer len: %ld\n",prev_len);
     buffer_append(buffer,NULL,20);

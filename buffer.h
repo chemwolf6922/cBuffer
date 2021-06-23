@@ -27,10 +27,15 @@ int buffer_delete(buffer_handle_t handle);
 */
 size_t buffer_length(buffer_handle_t handle);
 /*
+    Unshift data to the head of buffer
+    If data is NULL, unshift zeros to buffer
+*/
+int buffer_unshift(buffer_handle_t handle, const uint8_t *data, size_t data_len);
+/*
     Append data to buffer.
     If data is NULL, append zeros to buffer.
 */
-int buffer_append(buffer_handle_t handle, uint8_t *data, size_t data_len);
+int buffer_append(buffer_handle_t handle, const uint8_t *data, size_t data_len);
 /*
     reset read/write position to offset
 */

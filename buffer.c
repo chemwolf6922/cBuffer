@@ -21,6 +21,7 @@ typedef struct
     size_t offset;
     size_t length;
     buffer_node_t *entry;
+    buffer_node_t *tail;
     buffer_node_t *offset_node;
     size_t in_node_offset;
 } buffer_t;
@@ -117,7 +118,45 @@ int buffer_reset_offset(buffer_handle_t handle, size_t offset)
     return BUFFER_OK;
 }
 
-int buffer_append(buffer_handle_t handle, uint8_t *data, size_t data_len)
+int buffer_unshift(buffer_handle_t handle,const uint8_t *data, size_t data_len)
+{
+    if(handle == NULL)
+    {
+        return BUFFER_ERROR;
+    }
+    buffer_t *buffer = (buffer_t *)handle;
+    // prepare the new node
+    buffer_node_t *new_node = (buffer_node_t *)malloc(sizeof(buffer_node_t) + data_len);
+    if(new_node == NULL)
+    {
+        return BUFFER_ERROR_MEM;
+    }
+    memset(new_node, 0, sizeof(buffer_node_t));
+    new_node->data = (uint8_t *)(new_node + 1);
+    new_node->data_len = data_len;
+    new_node->next = NULL;
+    if (data == NULL)
+    {
+        memset(new_node->data, 0, new_node->data_len);
+    }
+    else
+    {
+        memcpy(new_node->data, data, new_node->data_len);
+    }
+    // update buffer
+    buffer->length += data_len;
+    new_node->next = buffer->entry;
+    buffer->entry = new_node;
+    if(buffer->tail == NULL)
+    {
+        buffer->tail = new_node;
+    }
+    // update offset
+    // offset does not change !!
+    return BUFFER_OK;
+}
+
+int buffer_append(buffer_handle_t handle, const uint8_t *data, size_t data_len)
 {
     if (handle == NULL)
     {
@@ -148,15 +187,11 @@ int buffer_append(buffer_handle_t handle, uint8_t *data, size_t data_len)
     {
         buffer->entry = new_node;
     }
-    else
+    if (buffer->tail != NULL)
     {
-        buffer_node_t *node = buffer->entry;
-        while (node->next != NULL)
-        {
-            node = node->next;
-        }
-        node->next = new_node;
+        buffer->tail->next = new_node;
     }
+    buffer->tail = new_node;
     // update offset
     if (buffer->offset_node == NULL)
     {
